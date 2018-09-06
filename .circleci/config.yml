@@ -10,24 +10,24 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
-      - run: docker run --rm aquasec/kube-hunter:latest --remote $DEV_NODE_IP | tee $CIRCLE_STAGE.log
+      - run: docker run --rm aquasec/kube-hunter:latest --remote $DEV_NODE_IP | tee scan.log
       - store_artifacts:
-          path: $CIRCLE_STAGE.log
+          path: scan.log
       - run:
           name: Notify failure
           when: on_fail
-          command: TYPE="Scan" EXTRA_TEXT="```$(cat $CIRCLE_STAGE.log)```" notify-job-failure.sh
+          command: TYPE="Scan" EXTRA_TEXT="```$(cat scan.log)```" notify-job-failure.sh
   prod:
     <<: *defaults
     steps:
       - setup_remote_docker
-      - run: docker run --rm aquasec/kube-hunter:latest --remote $PROD_NODE_IP | tee $CIRCLE_STAGE.log
+      - run: docker run --rm aquasec/kube-hunter:latest --remote $PROD_NODE_IP | tee scan.log
       - store_artifacts:
-          path: $CIRCLE_STAGE.log
+          path: scan.log
       - run:
           name: Notify failure
           when: on_fail
-          command: TYPE="Scan" EXTRA_TEXT="```$(cat $CIRCLE_STAGE.log)```" notify-job-failure.sh
+          command: TYPE="Scan" EXTRA_TEXT="```$(cat scan.log)```" notify-job-failure.sh
 
 workflows:
   version: 2
