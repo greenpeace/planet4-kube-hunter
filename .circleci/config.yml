@@ -1,0 +1,56 @@
+defaults: &defaults
+  docker:
+    - image: circleci/node:latest
+    - image: aquasec/kube-hunter:latest
+
+version: 2
+
+jobs:
+  dev:
+    <<: *defaults
+    steps:
+      - setup_remote_docker
+      - run: |
+          docker run --rm aquasec/kube-hunter:latest --remote $DEV_NODE_IP > scan.log
+          sync
+      - store_artifacts:
+          path: scan.log
+      - run:
+          name: Notify failure
+          when: on_fail
+          command: TYPE="Scan" EXTRA_TEXT="```$(cat scan.log)```" notify-job-failure.sh
+  prod:
+    <<: *defaults
+    steps:
+      - setup_remote_docker
+      - run: |
+          docker run --rm aquasec/kube-hunter:latest --remote $PROD_NODE_IP > scan.log
+          sync
+      - store_artifacts:
+          path: scan.log
+      - run:
+          name: Notify failure
+          when: on_fail
+          command: TYPE="Scan" EXTRA_TEXT="```$(cat scan.log)```" notify-job-failure.sh
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - dev:
+          context: org-global
+      - prod:
+          context: org-global
+  nightly:
+    jobs:
+      - dev:
+          context: org-global
+      - prod:
+          context: org-global
+    triggers:
+     - schedule:
+         cron: "0 0,12 * * *"
+         filters:
+           branches:
+             only:
+               - master
