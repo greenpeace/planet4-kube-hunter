@@ -10,7 +10,8 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
-      - run: docker run --rm aquasec/kube-hunter:latest --remote $DEV_NODE_IP > scan.log
+      - run: |
+          docker run --rm aquasec/kube-hunter:latest --remote $DEV_NODE_IP > scan.log
       - store_artifacts:
           path: scan.log
       - run:
@@ -21,7 +22,8 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
-      - run: docker run --rm aquasec/kube-hunter:latest --remote $PROD_NODE_IP > scan.log
+      - run: |
+          docker run --rm aquasec/kube-hunter:latest --remote $PROD_NODE_IP > scan.log
       - store_artifacts:
           path: scan.log
       - run:
