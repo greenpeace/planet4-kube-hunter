@@ -9,6 +9,7 @@ jobs:
   dev:
     <<: *defaults
     steps:
+      - setup_remote_docker
       - run: docker run --rm aquasec/kube-hunter --remote $DEV_NODE_IP | tee $CIRCLE_STAGE.log
       - store_artifacts:
           path: $CIRCLE_STAGE.log
@@ -19,6 +20,7 @@ jobs:
   prod:
     <<: *defaults
     steps:
+      - setup_remote_docker
       - run: docker run --rm aquasec/kube-hunter --remote $PROD_NODE_IP | tee $CIRCLE_STAGE.log
       - store_artifacts:
           path: $CIRCLE_STAGE.log
@@ -35,7 +37,7 @@ workflows:
           context: org-global
       - prod:
           context: org-global
-  nightly-scan:
+  nightly:
     jobs:
       - dev:
           context: org-global
