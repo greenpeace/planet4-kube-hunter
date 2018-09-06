@@ -1,7 +1,7 @@
 defaults: &defaults
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:latest
-    - image: aquasec/kube-hunter
+    - image: circleci/node:latest
+    - image: aquasec/kube-hunter:latest
 
 version: 2
 
@@ -10,7 +10,7 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
-      - run: docker run --rm aquasec/kube-hunter --remote $DEV_NODE_IP | tee $CIRCLE_STAGE.log
+      - run: docker run --rm aquasec/kube-hunter:latest --remote $DEV_NODE_IP | tee $CIRCLE_STAGE.log
       - store_artifacts:
           path: $CIRCLE_STAGE.log
       - run:
@@ -21,7 +21,7 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
-      - run: docker run --rm aquasec/kube-hunter --remote $PROD_NODE_IP | tee $CIRCLE_STAGE.log
+      - run: docker run --rm aquasec/kube-hunter:latest --remote $PROD_NODE_IP | tee $CIRCLE_STAGE.log
       - store_artifacts:
           path: $CIRCLE_STAGE.log
       - run:
