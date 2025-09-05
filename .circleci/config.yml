@@ -15,10 +15,6 @@ jobs:
           sync
       - store_artifacts:
           path: scan.log
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Scan" EXTRA_TEXT="```$(cat scan.log)```" notify-job-failure.sh
   prod:
     <<: *defaults
     steps:
@@ -28,10 +24,6 @@ jobs:
           sync
       - store_artifacts:
           path: scan.log
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Scan" EXTRA_TEXT="```$(cat scan.log)```" notify-job-failure.sh
 
 workflows:
   version: 2
